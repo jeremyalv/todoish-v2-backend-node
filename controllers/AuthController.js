@@ -25,25 +25,30 @@ export const register = async (req, res, next) => {
     const encryptedPassword = await bcrypt.hash(password, 10);
 
     // Create user
-    const user = await User.create({
+    const user = new User({
       email: email.toLowerCase(), // Sanitize email to lowercase
       first_name,
       last_name,
       password: encryptedPassword,
     });
 
-    // Create token
-    const token = jwt.sign(
-      {
-        user_id: user._id,
-        email: email,
-      },
-      process.env.TOKEN_KEY,
-      {
-        algorithm: "HS256",
-        expiresIn: "6h",
-      }
-    );
+    // Save user to db
+    await user.save();
+
+    // // Create token using record id and email
+    // const token = jwt.sign(
+    //   {
+    //     user_id: user._id,
+    //     email: email,
+    //   },
+    //   process.env.TOKEN_KEY,
+    //   {
+    //     algorithm: "HS256",
+    //     expiresIn: "6h",
+    //   }
+    // );
+
+    const token = createJWT(user);
 
     // Save token to User object
     user.token = token;
@@ -80,6 +85,10 @@ export const login = async (req, res, next) => {
       return res.status(400).send("Invalid password. Please try again");
     }
 
+    // Refresh user JWT
+    const token = createJWT(oldUser);
+    oldUser.token = token;
+
     res.status(200).json({
       status: "success",
       message: "Login sucessful",
@@ -89,4 +98,21 @@ export const login = async (req, res, next) => {
   catch (err) {
     res.status(400).send(err.message);
   }
+}
+
+const createJWT = (user) => {
+  // Create token using record id and email
+  const token = jwt.sign(
+    {
+      user_id: user._id,
+      email: user.email,
+    },
+    process.env.TOKEN_KEY,
+    {
+      algorithm: "HS256",
+      expiresIn: "6h",
+    }
+  );
+
+  return token;
 }
