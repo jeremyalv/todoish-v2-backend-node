@@ -52,6 +52,41 @@ export const register = async (req, res, next) => {
     res.status(201).json(user);
   }
   catch (err) {
-    console.log(err);
+    res.status(400).send(err.message);
   }
 };
+
+export const login = async (req, res, next) => {
+  try {
+    // Get user input
+    const { email, password } = req.body;
+
+    // Validate user input
+    if (!(email && password)) {
+      res.status(400).send("Missing required fields");
+    }
+
+    // Validate if user exists
+    const oldUser = await User.findOne({ email: email });
+
+    if (!oldUser) {
+      return res.status(409).send("User does not exist. Please register instead.");
+    }
+
+    // Verify user password against stored password in DB
+    const isPasswordCorrect = await bcrypt.compare(password, oldUser.password);
+
+    if (!isPasswordCorrect) {
+      return res.status(400).send("Invalid password. Please try again");
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: "Login sucessful",
+      user: oldUser
+    });
+  }
+  catch (err) {
+    res.status(400).send(err.message);
+  }
+}
