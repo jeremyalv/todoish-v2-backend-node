@@ -35,26 +35,17 @@ export const register = async (req, res, next) => {
     // Save user to db
     await user.save();
 
-    // // Create token using record id and email
-    // const token = jwt.sign(
-    //   {
-    //     user_id: user._id,
-    //     email: email,
-    //   },
-    //   process.env.TOKEN_KEY,
-    //   {
-    //     algorithm: "HS256",
-    //     expiresIn: "6h",
-    //   }
-    // );
-
     const token = createJWT(user);
 
     // Save token to User object
     user.token = token;
 
     // Return new user
-    res.status(201).json(user);
+    res.status(201).json({
+      status: "success",
+      message: "User created successfully.",
+      user: user
+    });
   }
   catch (err) {
     res.status(400).send(err.message);
@@ -75,7 +66,7 @@ export const login = async (req, res, next) => {
     const oldUser = await User.findOne({ email: email });
 
     if (!oldUser) {
-      return res.status(409).send("User does not exist. Please register instead.");
+      return res.status(404).send("User not found. Please register instead.");
     }
 
     // Verify user password against stored password in DB
