@@ -3,8 +3,10 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 
+import { db_username, db_password, db_cluster, db_name, server_port } from "./config/setup.js";
 import AuthRouter from "./routes/AuthRouter.js";
 import TasksRouter from "./routes/TasksRouter.js";
+
 
 const app = express();
 
@@ -16,7 +18,7 @@ app.use("/tasks", TasksRouter);
 
 if (process.env.NODE_ENV !== 'prod') {
   mongoose
-    .connect(`mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_CLUSTER}.mongodb.net/${process.env.MONGODB_DBNAME}?retryWrites=true&w=majority`)
+    .connect(`mongodb+srv://${db_username}:${db_password}@${db_cluster}.mongodb.net/${db_name}?retryWrites=true&w=majority`)
   .then(() => {
     console.log("Connected to MongoDB Database")
   })
@@ -26,6 +28,6 @@ if (process.env.NODE_ENV !== 'prod') {
   })
 }
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server is running on port ${process.env.PORT}`);
+app.listen(server_port, () => {
+  console.log(`Server is running on port ${server_port}`);
 });
