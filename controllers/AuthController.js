@@ -48,8 +48,6 @@ export const register = async (req, res, next) => {
     // Save token to User object
     user.token = token;
 
-    // TODO add user to database
-
     // Return new user
     res.status(201).json(user);
   }

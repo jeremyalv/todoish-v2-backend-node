@@ -16,7 +16,7 @@ app.use("/tasks", TasksRouter);
 
 if (process.env.NODE_ENV !== 'prod') {
   mongoose
-    .connect(`mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@sandbox.v4wi8gu.mongodb.net/?retryWrites=true&w=majority`)
+    .connect(`mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_CLUSTER}.mongodb.net/${process.env.MONGODB_DBNAME}?retryWrites=true&w=majority`)
   .then(() => {
     console.log("Connected to MongoDB Database")
   })
