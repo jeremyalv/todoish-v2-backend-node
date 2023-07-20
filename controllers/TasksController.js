@@ -102,5 +102,3 @@ export const deleteTask = async (req, res, next) => {
     task: task
   });
 }
-
-// TODO check getbyid, put, delete endpoints in postman
