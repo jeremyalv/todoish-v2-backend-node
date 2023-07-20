@@ -3,6 +3,7 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 
+import auth from "./middleware/auth.js";
 import { db_username, db_password, db_cluster, db_name, server_port } from "./config/setup.js";
 import AuthRouter from "./routes/AuthRouter.js";
 import TasksRouter from "./routes/TasksRouter.js";
@@ -27,6 +28,12 @@ if (process.env.NODE_ENV !== 'prod') {
     process.exit(1);
   })
 }
+
+// Welcome route
+// TODO add auth middleware to protect other endpoints!
+app.post("/welcome", auth, (req, res) => {
+  res.status(200).send("Welcome! 👋🏼");
+});
 
 app.listen(server_port, () => {
   console.log(`Server is running on port ${server_port}`);

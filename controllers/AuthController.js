@@ -98,10 +98,10 @@ const createJWT = (user) => {
       user_id: user._id,
       email: user.email,
     },
-    process.env.TOKEN_KEY,
+    process.env.JWT_SECRET,
     {
       algorithm: "HS256",
-      expiresIn: "6h",
+      expiresIn: `${process.env.JWT_EXPIRES_IN}`,
     }
   );
 

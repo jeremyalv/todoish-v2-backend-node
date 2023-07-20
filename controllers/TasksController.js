@@ -71,7 +71,6 @@ export const updateTask = async (req, res, next) => {
   if (!task) {
     res.status(404).send("Task not found.");
   }
-  
 
   const newTask = await Task.findByIdAndUpdate(id, {
     title, 
@@ -80,10 +79,10 @@ export const updateTask = async (req, res, next) => {
     due_date  
   });
 
-  res.status(204).json({
+  res.status(200).json({
     status: "success",
     message: "Task updated successfully",
-    task: newTask
+    prevTask: task
   });
 }
 
@@ -102,7 +101,6 @@ export const deleteTask = async (req, res, next) => {
     message: "Task deleted successfully",
     task: task
   });
-
 }
 
 // TODO check getbyid, put, delete endpoints in postman
